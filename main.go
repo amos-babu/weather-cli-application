@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -42,7 +43,12 @@ func main() {
 	if apiKey == "" {
 		log.Fatal("Api key not set")
 	}
-	res, err := http.Get("https://api.openweathermap.org/data/2.5/forecast?q=London&appid=" + apiKey + "&units=metric")
+	q := "Nairobi"
+
+	if len(os.Args) >= 2 {
+		q = os.Args[1]
+	}
+	res, err := http.Get("https://api.openweathermap.org/data/2.5/forecast?q=" + q + "&appid=" + apiKey + "&units=metric")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -79,14 +85,28 @@ func main() {
 		description,
 	)
 	fmt.Println()
-	// 2025-05-01 -- 13:00pm
-	for _, weatherReport := range weather.List {
-		fmt.Printf("%s, temp: %.0fC, %s, %s\n",
-			weatherReport.DateTime,
-			weatherReport.Main.TempC,
-			weatherReport.Weather[0].Main,
-			weatherReport.Weather[0].Description,
-		)
+
+	currentDate := time.Now().Format("2006-01-02")
+	tommorrorDate := time.Now().Add(24 * time.Hour).Format("2006-01-02")
+
+	layout := "2006-01-02 15:04:05"
+
+	for _, forecast := range weather.List {
+		parsedTime, err := time.Parse(layout, forecast.DateTime)
+		if err != nil {
+			fmt.Println("Parse error:", err)
+			continue
+		}
+
+		forecastDate := parsedTime.Format("2006-01-02")
+		if forecastDate == currentDate || forecastDate == tommorrorDate {
+			fmt.Printf("%s, temp: %.0fC, %s, %s\n",
+				parsedTime.Format("Mon Jan 2 3:04PM"),
+				forecast.Main.TempC,
+				forecast.Weather[0].Main,
+				forecast.Weather[0].Description,
+			)
+		}
 	}
 
 }
