@@ -77,7 +77,7 @@ func main() {
 		weather.List[0].Weather[0].Description
 
 	fmt.Println()
-	fmt.Printf("%s, %s: temp: %.0fC -> %s, %s\n",
+	fmt.Printf("%s, %s: temp: %.0f°C -> %s, %s\n",
 		name,
 		country,
 		temperature,
@@ -100,7 +100,7 @@ func main() {
 
 		forecastDate := parsedTime.Format("2006-01-02")
 		if forecastDate == currentDate || forecastDate == tommorrorDate {
-			fmt.Printf("%s, temp: %.0fC, %s, %s\n",
+			fmt.Printf("%s, temp: %.0f°C, %s, %s\n",
 				parsedTime.Format("Mon Jan 2 3:04PM"),
 				forecast.Main.TempC,
 				forecast.Weather[0].Main,
