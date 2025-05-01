@@ -4,7 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type Weather struct {
@@ -31,26 +35,34 @@ type Weather struct {
 // apiKey { f6cd6c6df35c0eeca40620360f689146 }
 
 func main() {
-	const apiKey = "f6cd6c6df35c0eeca40620360f689146"
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading the .env file")
+	}
+
+	apiKey := os.Getenv("API_KEY")
+	if apiKey == "" {
+		log.Fatal("Api key not set")
+	}
 	res, err := http.Get("https://api.openweathermap.org/data/2.5/forecast?q=Nairobi&appid=" + apiKey + "&units=metric")
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		panic("Weather API not available")
+		log.Fatal("Weather API not available")
 	}
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	var weather Weather
 	err = json.Unmarshal(body, &weather)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	name, country, temperature, condition, description :=
