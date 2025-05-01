@@ -29,8 +29,6 @@ type Weather struct {
 }
 
 // apiKey { f6cd6c6df35c0eeca40620360f689146 }
-//url { https://api.openweathermap.org/data/2.5/forecast?q=Nairobi&appid=YOUR_API_KEY }
-//url { http://api.openweathermap.org/data/2.5/weather?q=Nairobi&appid=" + apiKey + "&units=metric }
 
 func main() {
 	const apiKey = "f6cd6c6df35c0eeca40620360f689146"
@@ -49,29 +47,24 @@ func main() {
 		panic(err)
 	}
 
-	// fmt.Println(string(body))
-
 	var weather Weather
 	err = json.Unmarshal(body, &weather)
 	if err != nil {
 		panic(err)
 	}
 
-	// name, country, temperature, condition :=
-	// 	weather.City,
-	// 	weather.City.Country,
-	// 	weather.List[0].Main.TempC,
-	// 	weather.List[0].Weather[0].Description
+	name, country, temperature, condition, description :=
+		weather.City.Name,
+		weather.City.Country,
+		weather.List[0].Main.TempC,
+		weather.List[0].Weather[0].Main,
+		weather.List[0].Weather[0].Description
 
-	fmt.Print(weather.List[0].Main.TempC)
-	fmt.Printf("Nairobi, KE: tempC, condition")
-
-	// fmt.Printf(
-	// 	"%s, %s, %.0fC, %s\n Longitude -> %.0f, Latitide -> %.0f\n",
-	// 	name,
-	// 	weatherToday.Main,
-	// 	temperature,
-	// 	weatherToday.Description,
-	// 	coordinates.Longitude, coordinates.Latitude,
-	// )
+	fmt.Printf("%s, %s: temp: %.0fC -> %s, %s",
+		name,
+		country,
+		temperature,
+		condition,
+		description,
+	)
 }
