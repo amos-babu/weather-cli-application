@@ -32,8 +32,6 @@ type Weather struct {
 	} `json:"city"`
 }
 
-// apiKey { f6cd6c6df35c0eeca40620360f689146 }
-
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -44,7 +42,7 @@ func main() {
 	if apiKey == "" {
 		log.Fatal("Api key not set")
 	}
-	res, err := http.Get("https://api.openweathermap.org/data/2.5/forecast?q=Nairobi&appid=" + apiKey + "&units=metric")
+	res, err := http.Get("https://api.openweathermap.org/data/2.5/forecast?q=London&appid=" + apiKey + "&units=metric")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -72,11 +70,23 @@ func main() {
 		weather.List[0].Weather[0].Main,
 		weather.List[0].Weather[0].Description
 
-	fmt.Printf("%s, %s: temp: %.0fC -> %s, %s",
+	fmt.Println()
+	fmt.Printf("%s, %s: temp: %.0fC -> %s, %s\n",
 		name,
 		country,
 		temperature,
 		condition,
 		description,
 	)
+	fmt.Println()
+	// 2025-05-01 -- 13:00pm
+	for _, weatherReport := range weather.List {
+		fmt.Printf("%s, temp: %.0fC, %s, %s\n",
+			weatherReport.DateTime,
+			weatherReport.Main.TempC,
+			weatherReport.Weather[0].Main,
+			weatherReport.Weather[0].Description,
+		)
+	}
+
 }
