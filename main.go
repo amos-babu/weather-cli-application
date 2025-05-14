@@ -12,6 +12,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// struct to hold the weather data from the API
 type Weather struct {
 	List []struct {
 		Main struct {
@@ -33,12 +34,14 @@ type Weather struct {
 	} `json:"city"`
 }
 
+// main function to get the weather data from the API
 func main() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading the .env file")
 	}
 
+	// Get the API key from the environment variable
 	apiKey := os.Getenv("API_KEY")
 	if apiKey == "" {
 		log.Fatal("Api key not set")
@@ -63,12 +66,20 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// Check if the API returned an error
+	if res.StatusCode != http.StatusOK {
+		var apiError map[string]interface{}
+		json.Unmarshal(body, &apiError)
+		log.Fatalf("API error: %v", apiError["message"])
+	}
+
 	var weather Weather
 	err = json.Unmarshal(body, &weather)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// Print the weather data
 	name, country, temperature, condition, description :=
 		weather.City.Name,
 		weather.City.Country,
@@ -86,11 +97,13 @@ func main() {
 	)
 	fmt.Println()
 
+	// Print the forecast for today and tomorrow
 	currentDate := time.Now().Format("2006-01-02")
 	tommorrorDate := time.Now().Add(24 * time.Hour).Format("2006-01-02")
 
 	layout := "2006-01-02 15:04:05"
 
+	//Loop through the forecast data and print the relevant information
 	for _, forecast := range weather.List {
 		parsedTime, err := time.Parse(layout, forecast.DateTime)
 		if err != nil {
