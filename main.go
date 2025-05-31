@@ -36,6 +36,7 @@ type Weather struct {
 
 // main function to get the weather data from the API
 func main() {
+	//Load the ENV from .env return erro if something goes wrong
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading the .env file")
